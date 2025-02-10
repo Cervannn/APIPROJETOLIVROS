@@ -14,7 +14,17 @@ email: joi.string().required().max(50),
 senha: joi.string().required().max(50)
 })
 
-exports.listaClienteCpf = async (req, res) => {
+exports.listarCliente = async (req, res) => {
+    try {
+        const [result] = await db.query('SELECT * FROM cliente');
+        res.json(result);
+    } catch (err) {
+        console.error('Erro ao buscar cliente:', err);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+}
+
+exports.listarClienteCpf = async (req, res) => {
     const { cpf } = req.params;
     try {
         const [result] = await db.query('SELECT * FROM cliente WHERE cpf =?' , [cpf]);
@@ -31,7 +41,7 @@ exports.listaClienteCpf = async (req, res) => {
 }
  
 //adicinar novo cliente
-exports.adicinarCliente = async (req, res) => {
+exports.adicionarCliente = async (req, res) => {
     const { cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha } = req.body;
     //validação de dados
  
@@ -59,7 +69,7 @@ exports.adicinarCliente = async (req, res) => {
 exports.atualizarCliente = async (req, res) => {
     const { cpf } = req.params
     const { nome, endereco, bairro, cidade, cep, telefone, email, senha } = req.body;
-    const { error } = clienteSchema.validate({ cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha });
+    const { error } = clienteSchema.validate({ nome, endereco, bairro, cidade, cep, telefone, email, senha });
     if (error) {
         return res.status(400).json({ error: error.details[0].message })
     }
@@ -70,7 +80,7 @@ exports.atualizarCliente = async (req, res) => {
         }
         //Criptografando senhas
         const hash = await bcrypt.hash(senha, 10);
-        const clienteatualizado = { cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha: hash };
+        const clienteatualizado = { nome, endereco, bairro, cidade, cep, telefone, email, senha: hash };
         await db.query('UPDATE cliente SET ? WHERE cpf = ?', [clienteatualizado, cpf]);
         res.json({ message: 'Cliente atualizado com sucesso' });
     } catch (err) {

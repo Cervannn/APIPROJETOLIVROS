@@ -1,4 +1,3 @@
-// a importação de todas as dependências
 require('dotenv').config(); // carrega variáveis de ambiente de um arquivo .env
 const express = require('express')
 const helmet = require('helmet')
@@ -9,6 +8,9 @@ const db = require('./db/db')
  
  
 const routes = require('./routes/routes') // importa as rotas
+const clienteRoutes = require('./routes/clienteroutes');
+const produtoroutes = require('./routes/produtoroutes');
+const pedidoroutes = require('./routes/pedidoroutes');
 
 const corsOptions = {
     origin: ['http://localhost:3333', 'https://meudominio.com'], // lista de origens permitidas
@@ -32,7 +34,9 @@ app.get('/', (req, res) =>{ // REQ = requisição RES = resposta
 // apos declarar nossas rotas, aqui falamos para noss app usar elas como referencia
 //
 app.use('/', routes);
- 
+app.use('/', clienteRoutes);
+app.use('/', produtoroutes);
+app.use('/', pedidoroutes);
 //
 // middleware de tratamento de erros
 app.use((err, req, res, next) => { // ERR = erro REQ = requisição RES = resposta NEXT = continue

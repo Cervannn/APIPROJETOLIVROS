@@ -1,15 +1,15 @@
 const express=require('express')
 const router=express.Router();
-const pedidoControleer=require('../controller/pedidocontroller');
+const pedidoControler=require('../controller/pedidocontroller');
  
-router.get('/pedido', pedidoControleer.listarpedido);
+router.get('/pedido', pedidoControler.listarpedido);
  
-router.get('/pedido/:idpedido', pedidoControleer.listarpedidosid);
+router.get('/pedido/:idpedido', pedidoControler.listarpedidosid);
  
-router.post('/pedido', pedidoControleer.adicionarPedido);
+router.post('/pedido', pedidoControler.adicionarPedido);
  
-router.put('/pedido/idpedido',pedidoControleer.adicionarPedido )
+router.put('/pedido/idpedido',pedidoControler.adicionarPedido )
  
-router.delete('/pedido/:idpedido', pedidoControleer.deletarpedido)
+router.delete('/pedido/:idpedido', pedidoControler.deletarpedido)
  
 module.exports = router
