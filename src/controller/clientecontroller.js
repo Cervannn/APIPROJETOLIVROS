@@ -45,14 +45,14 @@ exports.adicionarCliente = async (req, res) => {
     const { cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha } = req.body;
     //validação de dados
  
-    const { error } = clienteSchema.validade({ cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha });
+    const { error } = clienteSchema.validate({ cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha });
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
  
     }
     try {
         const hash = await bcrypt.hash(senha, 10);
-        const novoCliente = { cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha: hash };
+        const novoCliente = { cpf, nome, endereco, bairro, cidade, cep, telefone, email, senha};
         await db.query('INSERT INTO cliente SET ?', novoCliente);
  
         res.json({ message: 'Cliente adicionado om sucesso' });

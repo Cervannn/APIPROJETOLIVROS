@@ -36,16 +36,13 @@ exports.listarpedidosid = async (req, res) => {
 }
  
 exports.adicionarPedido = async (req, res) => {
-    const { } = req.body;
+    const { dataPedido, qtdeItens, formaPagto, valortotal, observacao, cpf, idEntregador} = req.body;
  
-    const { error } = pedidoSchema.validade({
-        idpedido,
-        datapedido, qtdeItens, formaPgto, valortotal, observacao, cpf, idEntregador
-    });
+    const { error } = pedidoSchema.validate({dataPedido, qtdeItens, formaPagto, valortotal, observacao, cpf, idEntregador});
     if (error) {
         return res.status(400).json({ error: error.details[0] })
     } try {
-        const novopedido = { idpedido, datapedido, qtdeItens, formaPgto, valortotal, observacao, cpf, idEntregador };
+        const novopedido = { dataPedido, qtdeItens, formaPagto, valortotal, observacao, cpf, idEntregador };
         await db.query('INSERT INTO pedido SET ?', novopedido);
         res.json({ menssage: 'pedido adicionado com sucesso' });
     } catch (err) {
@@ -56,8 +53,8 @@ exports.adicionarPedido = async (req, res) => {
  
 exports.atualizarpedido = async (req, res) => {
     const { idpedido } = req.params;
-    const { datapedido, qtdeItens, formaPgto, valortotal, observacao, cpf, idEntregador } = req.body;
-    const { error } = produtoSchema.validate({ idpedido,datapedido,qtdeItens,formaPgto,valortotal,observacao,cpf,idEntregador});
+    const { dataPedido, qtdeItens, formaPagto, valortotal, observacao, cpf, idEntregador } = req.body;
+    const { error } = produtoSchema.validate({idpedido,dataPedido,qtdeItens,formaPagto,valortotal,observacao,cpf,idEntregador});
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
  
@@ -87,3 +84,19 @@ exports.deletarpedido=async(req,res)=>{
     res.status(500).json({error:'Error ao deletar o cliente'})
    }
    };
+ 
+exports.buscarpedidoCPF =async(req,res)=>{
+    const {nomepedido}=req.params;
+ 
+    try{
+        const[result]=await db.query('SELECT * FROM pedido WHERE nomepedido LIKE?',[`${nomepedido}%`]);
+        if (result.length===0) {
+            return res.status(404).json({error:'pedido não encontrado'});
+        }
+        res.json(result);
+    }catch(err){
+        console.error('Erro ao buscar pedido',err);
+       res.status(500).json({error:'Erro interno do servidor'})
+    }
+};
+   
